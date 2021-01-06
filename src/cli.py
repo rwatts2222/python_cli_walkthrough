@@ -6,8 +6,8 @@ Work wants an inventory app that:
             id
             name
             cond
-            ?checkedIn?
 """
+from models.item import Item
 
 next_id = 0
 items = [1, 2, 3]
@@ -23,17 +23,23 @@ def menu():
 
 # List All Items
 def list_items():
-    print("in list item function")
     for item in items:
         print(item)
-    print("in list item function")
+    
 # Add New Item
 def new_item():
     global next_id
+    global items
+
     name = input("Name:")
     cond = input("Condition: ")
     item_id = next_id
+
     next_id += 1
+
+    
+    tmp = Item(item_id, name, cond)
+    items.append(tmp)
 
 # Update Existing Item
 def update_existing(itemId):
