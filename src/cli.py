@@ -1,5 +1,6 @@
 # And Import Statement to make code from other files available
 from models.item import Item
+import csv
 
 next_id = 0
 items = []  # This will be used to store items
@@ -15,24 +16,61 @@ def menu():  # Prints Menu Options for the user
 
 
 def list_items():  # Writes all items to the Terminal
-    for item in items:
-        print(item)
+    """
+    1) Read the file into Python
+    2) Parse the file into usable data
+    3) Print out each item in the file
+    """
+
+    with open('inventory.csv', 'r') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            message = f"ID: { row['id'] }\tName: { row['name'] }\tCondition: {row['condition'] }"
+            print(message)
 
 
 def new_item():  # Gets user input for all need fields for an Item
-    global next_id  # Allows us access to the next_id number
+    """
+    TODO
+    1) Open and parse the file into CSV
+    2) Detect what the next id will be
+    3) Prompt the user for new item data (name, condition)
+    4) Add this item to the inventory.csv file
+    """
 
-    name = input("Name: ")
-    cond = input("Condition: ")
-    # Uses the global counter to give a Unique Id for each "Item"
-    item_id = next_id
+    with open('inventory.csv', 'r+') as file:
+        current_items = list(csv.DictReader(file))
+        try:
+            last_id = int(current_items[-1]['id'])
+        except IndexError:
+            last_id = -1
 
-    next_id += 1  # Updates Id with new value so next one is 1 more
+    with open('inventory.csv', 'a+', newline='') as file:
+        name = input('Name: > ')
+        condition = input('Condition: > ')
+        item = {
+            "id": last_id + 1,
+            "name": name,
+            "condition": condition
+        }
+        writer = csv.DictWriter(file, ["id", "name", "condition"])
+        if last_id == -1:
+            writer.writeheader()
+        writer.writerow(item)
 
-    # This is the Class -> Item from the other file we imported
-    tmp = Item(item_id, name, cond)  # Builds An Item/Stores it in tmp
+    # global next_id  # Allows us access to the next_id number
 
-    items.append(tmp)  # Adds Item to global items array
+    # name = input("Name: ")
+    # cond = input("Condition: ")
+    # # Uses the global counter to give a Unique Id for each "Item"
+    # item_id = next_id
+
+    # next_id += 1  # Updates Id with new value so next one is 1 more
+
+    # # This is the Class -> Item from the other file we imported
+    # tmp = Item(item_id, name, cond)  # Builds An Item/Stores it in tmp
+
+    # items.append(tmp)  # Adds Item to global items array
 
 
 def update_existing():  # Update Existing Item
@@ -80,6 +118,8 @@ def delete_item():
 
 
 def main():  # Starts the Program off, holds the loop until exit.
+    # Detect if the inventory.csv file exists. Create it if not.
+    open("inventory.csv", 'a+').close()
     while True:
         menu()  # Prints the Options to the Terminal
         choice = input("> ")  # Takes use choice
