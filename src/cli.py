@@ -1,8 +1,8 @@
 # And Import Statement to make code from other files available
-from models.item import Item
-import csv
+from models.item import Item  # Imports class from item.py
+import csv  # Imports csv (comma separated values file format)
 
-next_id = 0
+next_id = 0  # starts id number at 0
 items = []  # This will be used to store items
 
 def menu():  # Prints Menu Options for the user
@@ -22,30 +22,29 @@ def list_items():  # Writes all items to the Terminal
     3) Print out each item in the file
     """
 
-    with open('inventory.csv', 'r') as file:
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            message = f"ID: { row['id'] }\tName: { row['name'] }\tCondition: {row['condition'] }"
+    with open('inventory.csv', 'r') as file:  # opens inventory.csv in 'r' readable format (stream from beginning) as the variable, "file"
+        csv_reader = csv.DictReader(file)  # create variable that performs csv.DictReader function on "file"
+        for row in csv_reader:  # DictReader sorts file elements into rows, so we use "row" to refer to file elements.
+            message = f"ID: { row['id'] }\tName: { row['name'] }\tCondition: {row['condition'] }"  # assign variable to our row info
             print(message)
 
 
-def new_item():  # Gets user input for all need fields for an Item
+def new_item():  # Gets user input for all needed fields for an Item
     """
-    TODO
     1) Open and parse the file into CSV
     2) Detect what the next id will be
     3) Prompt the user for new item data (name, condition)
     4) Add this item to the inventory.csv file
     """
 
-    with open('inventory.csv', 'r+') as file:
-        current_items = list(csv.DictReader(file))
+    with open('inventory.csv', 'r+') as file:  # opens inventory.csv in 'r+' read/write format (stream from beginning) as the variable, "file"
+        current_items = list(csv.DictReader(file))  # create variable that performs csv.DictReader function on "file"
         try:
-            last_id = int(current_items[-1]['id'])
+            last_id = int(current_items[-1]['id'])  # determines what next item id will be, based on the last item's id.
         except IndexError:
-            last_id = -1
+            last_id = -1   # if last item id is 0, it will not assign an id of -1
 
-    with open('inventory.csv', 'a+', newline='') as file:
+    with open('inventory.csv', 'a+', newline='') as file:  
         name = input('Name: > ')
         condition = input('Condition: > ')
         item = {
